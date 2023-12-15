@@ -41,9 +41,9 @@ next_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Да
 
 @dp.message(Command("start"))
 async def start(message: Message, state: FSMContext):
-    media = InputMediaPhoto(type='photo', media=FSInputFile())
-
-    await message.answer_media_group(media=media,caption="Вы готовы начать тест?", reply_markup=start_kb)
+    media = FSInputFile("photos/start.jpeg")
+    await bot.send_photo(chat_id=message.from_user.id, photo=media, caption="Вы готовы начать тест?",
+                         reply_markup=start_kb)
     await state.set_state(Test.q)
     await state.update_data(id=0)
     await state.update_data(score=0)
@@ -55,8 +55,10 @@ async def ask_q(callback: CallbackQuery, state: FSMContext):
     id_ = data.get('id')
     q = db.get_question(id_)
     if not (q is None):
-        media = InputMediaPhoto(type='photo', media=FSInputFile(f"photos/{id_}.jpeg"))
-        await callback.message.edit_media(caption=q['text'], reply_markup=answer_kb, media=media)
+        media = FSInputFile(f"photos/{id_}.jpeg")
+        # await callback.message.edit_media(caption=q['text'], reply_markup=answer_kb, media=media)
+        await bot.send_photo(chat_id=callback.from_user.id, photo=media, caption=q['text'],
+                             reply_markup=answer_kb)
         await state.set_state(Test.a)
     else:
         score = data.get('score')
@@ -82,7 +84,7 @@ async def ans_q(callback: CallbackQuery, state: FSMContext):
     text += q.get("desk")
     await state.update_data(score=score, id=id_ + 1)
     await state.set_state(Test.q)
-    await callback.message.edit_text(text=text, reply_markup=next_kb)
+    await callback.message.answer(text=text, reply_markup=next_kb)
 
 
 if __name__ == "__main__":
