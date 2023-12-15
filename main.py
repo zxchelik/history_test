@@ -85,7 +85,7 @@ async def ans_q(callback: CallbackQuery, state: FSMContext):
     await state.update_data(score=score, id=id_ + 1)
     await state.set_state(Test.q)
     media = FSInputFile(f"photos/{id_}.jpeg")
-    await bot.send_photo(chat_id=callback.from_user.id, photo=media, caption=q['text'],
+    await bot.send_photo(chat_id=callback.from_user.id, photo=media, caption=text,
                          reply_markup=next_kb)
 
 
