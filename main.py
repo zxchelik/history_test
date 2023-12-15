@@ -64,7 +64,7 @@ async def ask_q(callback: CallbackQuery, state: FSMContext):
         score = data.get('score')
         text = f"""Тест закончился.
 Твой результат : {score}/{id_}"""
-        await callback.message.edit_text(text=text)
+        await callback.message.answer(text=text)
         await state.clear()
 
 
